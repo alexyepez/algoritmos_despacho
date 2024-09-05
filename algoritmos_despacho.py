@@ -16,6 +16,11 @@ class Despacho(QWidget):
 
     def initializeUserInterface(self):
         """
+        DESCRIPCIÓN:    Se inicializa la interfaz de usuario con los elementos necesarios para ingresar los datos
+
+        ENTRADA: Ninguna.
+
+        SALIDA: Ninguna.
         """
         # menú desplegable en la barra superior
         menubar = QMenuBar(self)
