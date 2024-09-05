@@ -360,7 +360,7 @@ class Despacho(QWidget):
 
         # Se agrega la gráfica al layout
         layout.addWidget(canvas)
-        layout.setStretchFactor(canvas, 65)  # Se da más espacio a la gráfica (3/4 del total)
+        layout.setStretchFactor(canvas, 65)  # Se da más espacio a la gráfica (65% del total)
 
 
         # Se crea un layout vertical para la tabla y su título
@@ -429,7 +429,7 @@ class Despacho(QWidget):
 
         # Se agrega el layout de la tabla al layout principal
         layout.addLayout(diseno_tabla)
-        layout.setStretchFactor(diseno_tabla, 35)  # Se da menos espacio a la tabla (1/4 del total)
+        layout.setStretchFactor(diseno_tabla, 35)  # Se da menos espacio a la tabla (35% del total)
 
         dialog.setLayout(layout)
         dialog.exec_() # Se muestra la tabla de resultados en modo bloqueante
@@ -460,8 +460,10 @@ class Despacho(QWidget):
             "- Prioridad: Proceso con la prioridad más alta se ejecuta primero.\n\n"
             "Instrucciones:\n"
             "1. Seleccione el algoritmo deseado desde el menú desplegable.\n"
-            "2. Ingrese los datos de los procesos: nombre, ráfaga de CPU, tiempo de llegada y prioridad (si aplica).\n"
-            "3. Haga clic en 'Ejecutar Algoritmo' para generar la gráfica de Gantt."
+            "2. Haga clic en 'Agregar Proceso' para añadir una fila a la tabla, el nombre del proceso se agrega automáticamente..\n"
+            "3. Ingrese los datos de los procesos: Ráfaga de CPU, tiempo de llegada y prioridad (si aplica).\n"
+            "4. Haga clic en 'Eliminar Última Fila' para eliminar la última fila de la tabla.\n"
+            "5. Haga clic en 'Ejecutar Algoritmo' para generar la gráfica de Gantt, calcular los tiempos de espera, tiempos de sistema y los promedios correspondientes."
         )
         QMessageBox.information(self, "Help", texto_ayuda)
 
