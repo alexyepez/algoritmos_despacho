@@ -135,14 +135,14 @@ class Despacho(QWidget):
                 item = self.tabla.item(fila, columna)
                 if not item or not item.text().isdigit() or int(item.text()) < 0:
                     QMessageBox.warning(self, "Error de Validación", "Por favor, complete todos los campos e ingrese números mayores o iguales a cero.")
-                    return False  # Detener si hay error
+                    return False  # Se detiene si hay error
             
-            # Solo validar la prioridad si la columna no está oculta (algoritmo de prioridad)
-            if not self.tabla.isColumnHidden(3):  # Columna 3 es la prioridad
+            # Solo se valida la prioridad si la columna no está oculta (algoritmo de prioridad)
+            if not self.tabla.isColumnHidden(3):  # La columna 3 es la prioridad
                 campo_prioridad = self.tabla.item(fila, 3)
                 if not campo_prioridad or not campo_prioridad.text().isdigit() or int(campo_prioridad.text()) < 0:
                     QMessageBox.warning(self, "Error de Validación", "Por favor, complete todos los campos e ingrese números mayores o iguales a cero.")
-                    return False  # Detener si hay error
+                    return False  # Se detiene si hay error
         return True
 
 
@@ -349,7 +349,7 @@ class Despacho(QWidget):
 
         for i, proceso in enumerate(procesos):
             color = colores[i % len(colores)] # Se selecciona un color de la lista si hay más de 3 procesos
-            alto_barra = 0.8 if len(procesos) > 3 else 0.4
+            alto_barra = 0.8 if len(procesos) > 3 else 0.4 # Se ajusta el alto de la barra si hay más de 3 procesos
             ax.barh(proceso['nombre'], proceso['ejecucion'], left=tiempos_de_finalizacion[i] - proceso['ejecucion'], height=alto_barra, color=color)
 
         ax.set_xlabel('Tiempo', fontsize=12, fontweight='bold')
@@ -414,10 +414,10 @@ class Despacho(QWidget):
         item_promedio.setForeground(Qt.blue) # Se establece el color del texto en azul
 
         item_promedio_espera = QTableWidgetItem(str(round(tiempo_promedio_espera, 2)))
-        item_promedio_espera.setFont(QFont("Arial", 12, QFont.Bold)) # Se establece la fuente en negrita
+        item_promedio_espera.setFont(QFont("Arial", 10, QFont.Bold)) # Se establece la fuente en negrita
 
         item_promedio_sistema = QTableWidgetItem(str(round(tiempo_promedio_sistema, 2)))
-        item_promedio_sistema.setFont(QFont("Arial", 12, QFont.Bold)) # Se establece la fuente en negrita
+        item_promedio_sistema.setFont(QFont("Arial", 10, QFont.Bold)) # Se establece la fuente en negrita
 
         # Se añaden los promedios a la tabla
         tabla.setItem(len(procesos), 0, item_promedio)
