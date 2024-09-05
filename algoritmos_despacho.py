@@ -121,6 +121,31 @@ class Despacho(QWidget):
         else:
             self.tabla.setColumnHidden(3, False) # Se muestra la columna de prioridad
 
+    def validar_entrada_datos(self):
+        """
+        Se valida que los valores de la tabla sean mayores o iguales a cero, y que no estén vacíos.
+
+        ENTRADA: Ninguna.
+
+        SALIDA: bool - True si los datos son válidos, False en caso contrario.
+        """
+        for fila in range(self.tabla.rowCount()):
+            # Validar los campos de ráfaga, tiempo de llegada (siempre presentes)
+            for columna in range(1, 3):  # Columnas 1: ráfaga, 2: tiempo de llegada
+                item = self.tabla.item(fila, columna)
+                if not item or not item.text().isdigit() or int(item.text()) < 0:
+                    QMessageBox.warning(self, "Error de Validación", "Por favor, complete todos los campos e ingrese números mayores o iguales a cero.")
+                    return False  # Detener si hay error
+            
+            # Solo validar la prioridad si la columna no está oculta (algoritmo de prioridad)
+            if not self.tabla.isColumnHidden(3):  # Columna 3 es la prioridad
+                campo_prioridad = self.tabla.item(fila, 3)
+                if not campo_prioridad or not campo_prioridad.text().isdigit() or int(campo_prioridad.text()) < 0:
+                    QMessageBox.warning(self, "Error de Validación", "Por favor, complete todos los campos e ingrese números mayores o iguales a cero.")
+                    return False  # Detener si hay error
+        return True
+
+
     # Función para ejecutar el algoritmo seleccionado
     def correr_algoritmo(self):
         """
@@ -131,6 +156,9 @@ class Despacho(QWidget):
 
         SALIDA: Ninguna.
         """
+        if not self.validar_entrada_datos():
+            return  # Detener si la validación falla
+
         # Aquí se ejecuta el algoritmo seleccionado
         algoritmo_seleccionado = self.algoritmo_selector.currentText()
         procesos = []
@@ -317,7 +345,7 @@ class Despacho(QWidget):
         ax = figura.add_subplot(111)
 
         # Se crea una lista de colores para los procesos
-        colores = ['#FF5733', '#33FF57', '#3357FF', '#F3FF33', '#33FFF5']
+        colores = ['#FF5733', '#33FF57', '#3357FF', '#F3FF33', '#33FFF5', '#FF33F5']
 
         for i, proceso in enumerate(procesos):
             color = colores[i % len(colores)] # Se selecciona un color de la lista si hay más de 3 procesos
@@ -336,27 +364,35 @@ class Despacho(QWidget):
 
 
         # Se crea un layout vertical para la tabla y su título
-        table_layout = QVBoxLayout()
+        diseno_tabla = QVBoxLayout()
     
         # Se crea y se agrega un título para la tabla de resultados
         titulo_tabla = QLabel("Resultados del Algoritmo")
         fuente = QFont()
         fuente.setPointSize(12) # Se ajusta el tamaño de la fuente
         fuente.setBold(True) # Se establece la fuente en negrita
+  
         titulo_tabla.setFont(fuente)
         titulo_tabla.setAlignment(Qt.AlignCenter)
-        table_layout.addWidget(titulo_tabla)  # Agregar el título al layout
+        diseno_tabla.addWidget(titulo_tabla)  # Agregar el título al layout
 
         # Se crea y se agrega la tabla de resultados al lado derecho
         tabla = QTableWidget(dialog)
         tabla.setColumnCount(3)
         tabla.setHorizontalHeaderLabels(["Proceso", "Tiempo de espera", "Tiempo de sistema"])
+        
+        # Se cambia la fuente del encabezado
+        encabezado = tabla.horizontalHeader()
+        fuente = QFont("Arial", 10, QFont.Bold)
+        encabezado.setFont(fuente)
+
+        tabla.setEditTriggers(QTableWidget.NoEditTriggers) # Se deshabilita la edición de la tabla
         tabla.setRowCount(len(procesos) + 1) # Se añade una fila adicional para los promedios
 
         # Se ajusta el tamaño de las columnas
         tabla.setColumnWidth(0, 100) # Columna de proceso
         tabla.setColumnWidth(1, 150) # Columna de Tiempo de espera
-        tabla.setColumnWidth(2, 150) # Columna de tiempo en el sistema
+        tabla.setColumnWidth(2, 170) # Columna de tiempo en el sistema
 
         tiempo_total_espera = 0
         tiempo_total_sistema = 0
@@ -389,11 +425,11 @@ class Despacho(QWidget):
         tabla.setItem(len(procesos), 2, item_promedio_sistema)
 
         #table.resizeColumnsToContents()
-        table_layout.addWidget(tabla)  # Se agrega la tabla al layout
+        diseno_tabla.addWidget(tabla)  # Se agrega la tabla al layout
 
         # Se agrega el layout de la tabla al layout principal
-        layout.addLayout(table_layout)
-        layout.setStretchFactor(table_layout, 35)  # Se da menos espacio a la tabla (1/4 del total)
+        layout.addLayout(diseno_tabla)
+        layout.setStretchFactor(diseno_tabla, 35)  # Se da menos espacio a la tabla (1/4 del total)
 
         dialog.setLayout(layout)
         dialog.exec_() # Se muestra la tabla de resultados en modo bloqueante
@@ -417,7 +453,7 @@ class Despacho(QWidget):
 
         SALIDA: Ninguna.
         """
-        help_text = (
+        texto_ayuda = (
             "Este software permite seleccionar y ejecutar tres algoritmos de despacho para sistemas operativos:\n"
             "- FIFO: Primer proceso en llegar, primer proceso en ser ejecutado.\n"
             "- SJF: Proceso con la ráfaga más corta se ejecuta primero.\n"
@@ -427,7 +463,7 @@ class Despacho(QWidget):
             "2. Ingrese los datos de los procesos: nombre, ráfaga de CPU, tiempo de llegada y prioridad (si aplica).\n"
             "3. Haga clic en 'Ejecutar Algoritmo' para generar la gráfica de Gantt."
         )
-        QMessageBox.information(self, "Help", help_text)
+        QMessageBox.information(self, "Help", texto_ayuda)
 
 
 if __name__ == '__main__':
