@@ -81,10 +81,9 @@ python simulador_algoritmos.py
 ![image](https://github.com/user-attachments/assets/21b1fa35-07df-49c6-8c7f-73f0da991cb9)
 
 Funciones Principales del Código:
-- run_algorithm(): Ejecuta el algoritmo seleccionado y recoge los datos ingresados.
-- show_gantt_chart(): Genera el diagrama de Gantt con los procesos en ejecución.
-- show_results_table(): Muestra los tiempos de espera y los tiempos en el sistema en una tabla, calculando y añadiendo una fila con el promedio.
-- validate_input(): Verifica que todos los datos ingresados sean válidos (números positivos, campos completos).
+- correr_algoritmo(): Ejecuta el algoritmo seleccionado y recoge los datos ingresados.
+- mostrar_resultados(): Genera el diagrama de Gantt con los procesos en ejecución, y se muestran los tiempos de espera y los tiempos en el sistema en una tabla, calculando y añadiendo una fila con el promedio.
+- validar_entrada_datos(): Verifica que todos los datos ingresados sean válidos (números positivos, campos completos).
 
 ## Licencia
 Este proyecto está bajo la Licencia MIT - vea el archivo [Licencia MIT](./LICENSE) para más detalles.
