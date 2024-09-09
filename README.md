@@ -40,8 +40,8 @@ Instrucciones de Instalación
 Clona el repositorio en tu máquina local:
 
 ```bash
-git clone https://github.com/tu_usuario/tu_repositorio.git
-cd tu_repositorio
+git clone [https://github.com/tu_usuario/tu_repositorio.git](https://github.com/alexyepez/algoritmos_despacho)
+cd algoritmos_despacho
 ```
 
 Instala las dependencias del proyecto:
