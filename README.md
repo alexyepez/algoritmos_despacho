@@ -85,3 +85,6 @@ Funciones Principales del Código:
 - show_gantt_chart(): Genera el diagrama de Gantt con los procesos en ejecución.
 - show_results_table(): Muestra los tiempos de espera y los tiempos en el sistema en una tabla, calculando y añadiendo una fila con el promedio.
 - validate_input(): Verifica que todos los datos ingresados sean válidos (números positivos, campos completos).
+
+## Licencia
+Este proyecto está bajo la licencia MIT. Consulta el archivo LICENSE para más detalles.
