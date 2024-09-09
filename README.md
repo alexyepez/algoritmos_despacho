@@ -87,4 +87,4 @@ Funciones Principales del Código:
 - validate_input(): Verifica que todos los datos ingresados sean válidos (números positivos, campos completos).
 
 ## Licencia
-Este proyecto está bajo la licencia MIT. Consulta el archivo LICENSE para más detalles.
+Este proyecto está bajo la Licencia MIT - vea el archivo [Licencia MIT](./LICENSE) para más detalles.
