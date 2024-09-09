@@ -53,7 +53,7 @@ pip install -r requirements.txt
 Ejecuta el programa:
 
 ```bash
-python simulador_algoritmos.py
+python algoritmos_despacho.py
 ```
 
 ## Uso del Programa
@@ -73,7 +73,6 @@ python simulador_algoritmos.py
 
 ## Ejemplo de Diagrama de Gantt
 - Una vez que se ejecuta un algoritmo, se generará un diagrama de Gantt como el siguiente:
-
 
 ## Resultados en la Tabla
 - Los resultados para los tiempos de espera y tiempos en el sistema aparecerán en una tabla, con una fila adicional que muestra el promedio:
