@@ -41,9 +41,26 @@ class Despacho(QWidget):
 
         # Se crea la tabla  para ingresar procesos
         self.tabla = QTableWidget(self)
+        self.tabla.setAlternatingRowColors(True)  # Habilitar colores alternados
+        self.tabla.setStyleSheet("""
+            QTableWidget {
+                background-color: #F5F5F5;  /* Color de fondo predeterminado */
+                alternate-background-color: #E8FFEF;  /* Color de fondo alternado */
+                selection-background-color: #BEF7D0;  /* Color de selección */
+            }
+            QTableWidget::item:selected {
+                background-color: #D4FFE1;  /* Color de fondo al seleccionar */
+            }
+        """)
         self.tabla.setColumnCount(4)
         self.tabla.setHorizontalHeaderLabels(["Proceso", "Ráfaga (CPU)", "Tiempo de llegada", "Prioridad"])
         layout.addWidget(self.tabla)
+
+        # Estilo para el encabezado horizontal
+        self.tabla.horizontalHeader().setStyleSheet(
+        "QHeaderView::section { background-color: lightblue; color: black; font-weight: bold; border: 1px solid black; }"
+        )
+        
 
         # Se ajusta el tamaño de las columnas
         self.tabla.setColumnWidth(0, 100) # Columna de proceso
@@ -65,6 +82,15 @@ class Despacho(QWidget):
         self.boton_ejecutar = QPushButton("Ejecutar Algoritmo", self)
         self.boton_ejecutar.clicked.connect(self.correr_algoritmo)
         layout.addWidget(self.boton_ejecutar)
+
+        # Aplicar colores a los botones
+        self.boton_adicionar_fila.setStyleSheet("background-color: '#6eff70'; color: black;")
+        self.boton_remover_fila.setStyleSheet("background-color: '#ffc34c'; color: black;")
+        self.boton_ejecutar.setStyleSheet("background-color: '#4cabff'; color: black;")
+
+
+        # Cambiar el fondo de la ventana
+        self.setStyleSheet("background-color: lightgray;")
 
         # Se establece el tamaño de la ventana
         self.resize(800, 500) # Se ajusta el tamaño de la ventana (ancho, alto)
@@ -347,11 +373,25 @@ class Despacho(QWidget):
         # Se crea una lista de colores para los procesos
         colores = ['#FF5733', '#33FF57', '#3357FF', '#F3FF33', '#33FFF5', '#FF33F5']
 
-        for i, proceso in enumerate(procesos):
-            color = colores[i % len(colores)] # Se selecciona un color de la lista si hay más de 3 procesos
-            alto_barra = 0.8 if len(procesos) > 3 else 0.4 # Se ajusta el alto de la barra si hay más de 3 procesos
-            ax.barh(proceso['nombre'], proceso['ejecucion'], left=tiempos_de_finalizacion[i] - proceso['ejecucion'], height=alto_barra, color=color)
+        # Creamos una lista de tuplas que relacione cada proceso con su tiempo de finalización
+        procesos_con_tiempo = list(zip(procesos, tiempos_de_finalizacion))
 
+        # Ordenamos los procesos según el orden original por su 'nombre'
+        orden_original = [proceso['nombre'] for proceso in procesos]
+        orden_original = sorted(orden_original)
+        procesos_con_tiempo_ordenados = sorted(procesos_con_tiempo, key=lambda p: orden_original.index(p[0]['nombre']))
+        print(procesos_con_tiempo_ordenados)
+
+        # Iteramos sobre los procesos en el orden original, respetando su tiempo de finalización
+        for i, (proceso, tiempo_finalizacion) in enumerate(procesos_con_tiempo_ordenados):
+            color = colores[i % len(colores)]  # Selecciona un color de la lista
+            alto_barra = 0.8 if len(procesos) > 3 else 0.4  # Ajusta el alto de la barra si hay más de 3 procesos
+    
+            # Grafica cada barra, respetando el tiempo de finalización
+            ax.barh(proceso['nombre'], proceso['ejecucion'], 
+            left=tiempo_finalizacion - proceso['ejecucion'],  # Calcula dónde debe comenzar la barra
+            height=alto_barra, color=color)
+        
         ax.set_xlabel('Tiempo', fontsize=12, fontweight='bold')
         ax.set_ylabel('Proceso', fontsize=12, fontweight='bold')
         ax.set_title('Diagrama de Gantt - Algoritmo ' + self.algoritmo_selector.currentText(), fontsize=14, fontweight='bold')
@@ -380,6 +420,10 @@ class Despacho(QWidget):
         tabla = QTableWidget(dialog)
         tabla.setColumnCount(3)
         tabla.setHorizontalHeaderLabels(["Proceso", "Tiempo de espera", "Tiempo de sistema"])
+
+        tabla.horizontalHeader().setStyleSheet(
+        "QHeaderView::section { background-color: '#a9a8ff'; color: black; font-weight: bold; }"
+        )
         
         # Se cambia la fuente del encabezado
         encabezado = tabla.horizontalHeader()
@@ -397,12 +441,25 @@ class Despacho(QWidget):
         tiempo_total_espera = 0
         tiempo_total_sistema = 0
 
-        for i, proceso in enumerate(procesos):
+        # Creamos un diccionario para mapear el nombre del proceso a su índice original
+        proceso_a_indice = {proceso['nombre']: idx for idx, proceso in enumerate(procesos)}
+
+        # Creamos una lista de índices que reflejen el orden en 'procesos_con_tiempos_ordenados'
+        indices_ordenados = [proceso_a_indice[proceso['nombre']] for proceso, _ in procesos_con_tiempo_ordenados]
+
+        # Reordenar tiempos_de_espera y tiempos_de_sistema
+        tiempos_de_espera_ordenados = [tiempos_de_espera[idx] for idx in indices_ordenados]
+        tiempos_de_sistema_ordenados = [tiempos_de_sistema[idx] for idx in indices_ordenados]
+
+
+        for i, proceso in enumerate(procesos_con_tiempo_ordenados):
+            dic_proceso = proceso[0]
+            nombre_proceso = dic_proceso['nombre']
             tiempo_total_espera += tiempos_de_espera[i]
             tiempo_total_sistema += tiempos_de_sistema[i]
-            tabla.setItem(i, 0, QTableWidgetItem(proceso['nombre']))
-            tabla.setItem(i, 1, QTableWidgetItem(str(tiempos_de_espera[i])))
-            tabla.setItem(i, 2, QTableWidgetItem(str(tiempos_de_sistema[i])))
+            tabla.setItem(i, 0, QTableWidgetItem(nombre_proceso))
+            tabla.setItem(i, 1, QTableWidgetItem(str(tiempos_de_espera_ordenados[i])))
+            tabla.setItem(i, 2, QTableWidgetItem(str(tiempos_de_sistema_ordenados[i])))
 
         # Se calculan los promedios
         tiempo_promedio_espera = tiempo_total_espera / len(procesos)
@@ -411,7 +468,7 @@ class Despacho(QWidget):
         # Se crea una fila adicional para los promedios personalizada
         item_promedio = QTableWidgetItem("Promedio")
         item_promedio.setFont(QFont("Arial", 12, QFont.Bold)) # Se establece la fuente en negrita
-        item_promedio.setForeground(Qt.blue) # Se establece el color del texto en azul
+        item_promedio.setForeground(Qt.black) # Se establece el color del texto en negro
 
         item_promedio_espera = QTableWidgetItem(str(round(tiempo_promedio_espera, 2)))
         item_promedio_espera.setFont(QFont("Arial", 10, QFont.Bold)) # Se establece la fuente en negrita
